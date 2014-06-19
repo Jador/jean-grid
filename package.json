@@ -1,0 +1,17 @@
+{
+  "name": "jean-grid",
+  "version": "0.0.1",
+  "description": "An Angular based grid with an accordion effect",
+  "scripts": {
+    "test": "npm test"
+  },
+  "keywords": [
+    "angular",
+    "grid",
+    "accordion",
+    "jean",
+    "jean grid"
+  ],
+  "author": "Tyler Graham <tyler.graham.prog@gmail.com>",
+  "license": "MIT"
+}
