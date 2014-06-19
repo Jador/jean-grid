@@ -5,11 +5,10 @@
     "Tyler Graham <tyler.graham.prog@gmail.com>"
   ],
   "description": "An Angular based grid with an accordion effect",
-  "moduleType": [
-    "node"
-  ],
+  "homepage": "https://github.com/Jador/jean-grid",
   "keywords": [
     "angular",
+    "angularjs",
     "grid",
     "accordion",
     "jean",

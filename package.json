@@ -5,13 +5,21 @@
   "scripts": {
     "test": "npm test"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Jador/jean-grid.git"
+  },
   "keywords": [
     "angular",
+    "angularjs",
     "grid",
     "accordion",
     "jean",
     "jean grid"
   ],
   "author": "Tyler Graham <tyler.graham.prog@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "gulp": "^3.8.1"
+  }
 }
