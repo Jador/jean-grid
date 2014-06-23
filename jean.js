@@ -15,12 +15,10 @@ angular.module('jnGrid', [])
 
     function createAccordion(scope, element, template) {
       if(template) {
-        var el = angular.element(scope.options.template);
-        el.attr('ng-show', 'row.clicked');
 
-        element.append(el);
-
-        $compile(el)(scope);
+        template(scope, function(el) {
+          element.append(el);
+        });
 
         element.bind('click', function() {
           scope.row.clicked = !scope.row.clicked;
@@ -61,6 +59,12 @@ angular.module('jnGrid', [])
                 '</div>',
       link: function(scope) {
         scope.options = scope.options || {}
+
+        if(scope.options.template) {
+          var el = angular.element(scope.options.template);
+          el.attr('ng-show', 'row.clicked'); //append click handler | will make smarter later
+          scope.options.template = $compile(el);
+        }
       }
     }
   }]);
