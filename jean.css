@@ -1,17 +1,30 @@
 jn-grid-cell, [jn-grid-cell] {
   display: table-cell;
+  padding: 0.5em;
 }
 
 jn-grid-row, [jn-grid-row] {
   display: table-row;
-  cursor: pointer;
 }
 
 jn-grid,[jn-grid] {
   display: table;
   width: 100%;
+  font-family: 'Helvetica neue', arial, sans-serif;
 }
 
-.jn-accordion {
+.jnAccordion {
   clear: both;
+}
+
+.clickable,
+  cursor: pointer;
+}
+
+.jnRowEven {
+  background: #fff;
+}
+
+.jnRowOdd {
+  background: #ddd;
 }

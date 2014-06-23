@@ -61,18 +61,12 @@ angular.module('jnGrid', [])
       restrict: 'EA',
       requires: 'jnGrid',
 
-      compile: function() {
+      link: function(scope, element) {
+        var row = scope.row;
+        row.clicked = false;
 
-        return {
-          pre: function(scope, element) {
-
-            var row = scope.row;
-            row.clicked = false;
-
-            createCells(scope, element);
-            createAccordion(scope, element, scope.options.accordion);
-          }
-        };
+        createCells(scope, element);
+        createAccordion(scope, element, scope.options.accordion);
       }
     };
   }])
@@ -83,7 +77,7 @@ angular.module('jnGrid', [])
       if(scope.options.accordion) {
         var el = angular.element(scope.options.accordion);
 
-        el.addClass('jn-accordion');
+        el.addClass('jnAccordion');
         el.attr('ng-show', 'row.clicked'); //append click handler | will make smarter later
 
         scope.options.accordion = $compile(el);
@@ -96,7 +90,7 @@ angular.module('jnGrid', [])
         dataset: '=',
         options: '=?'
       },
-      template: '<jn-grid-row ng-repeat="row in dataset"></jn-grid-row>',
+      template: '<jn-grid-row ng-class="{jnRowEven: $even, jnRowOdd: $odd}" ng-repeat="row in dataset"></jn-grid-row>',
       link: function(scope) {
         scope.options = scope.options || {}
         createAccordionTemplate(scope);
