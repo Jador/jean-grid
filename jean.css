@@ -1,3 +1,16 @@
-.jn-cell {
-  display: inline-block;
+jn-grid-cell, [jn-grid-cell] {
+  display: table-cell;
+}
+
+jn-grid-row, [jn-grid-row] {
+  display: table-row;
+}
+
+jn-grid,[jn-grid] {
+  display: table;
+  width: 100%;
+}
+
+.jn-accordion {
+  clear: both;
 }

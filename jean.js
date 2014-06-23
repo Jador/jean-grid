@@ -4,26 +4,45 @@ angular.module('jnGrid', [])
     return {
       restrict: 'EA',
       requires: 'jnGrid',
+      replace: true,
       scope: {
-        content: '@'
+        value: '='
       },
-      template: '<div class="jn-cell">{{ content }}</div>'
+      template: '<td>{{ value }}</td>'
     };
   }])
 
-  .directive('jnGridRow', ['$compile', function($compile) {
+  .directive('jnGridRow', ['$compile', '$rootScope', function($compile, $rootScope) {
+
+    var IGNORED_PROPERTIES = [ '$$hashKey', 'clicked' ];
 
     function createAccordion(scope, element, template) {
       if(template) {
 
         template(scope, function(el) {
-          element.append(el);
+          element.after(el);
         });
 
         element.bind('click', function() {
           scope.row.clicked = !scope.row.clicked;
           scope.$apply();
         });
+
+      }
+    }
+
+    function createCells(scope, element) {
+      if(!scope.options.columns) {
+        var keys = Object.keys(scope.row);
+
+        for(var i in keys) {
+          var key = keys[i];
+
+          if(IGNORED_PROPERTIES.indexOf(key) === -1) {
+            element.append($compile('<div jn-grid-cell value="row.' + key + '"></div>')(scope));
+          }
+
+        }
       }
     }
 
@@ -32,15 +51,15 @@ angular.module('jnGrid', [])
       requires: 'jnGrid',
 
       compile: function() {
+
         return {
           pre: function(scope, element) {
 
             var row = scope.row;
             row.clicked = false;
 
-            element.append(row.name);
+            createCells(scope, element);
             createAccordion(scope, element, scope.options.template);
-
           }
         };
       }
@@ -48,23 +67,28 @@ angular.module('jnGrid', [])
   }])
 
   .directive('jnGrid', ['$compile', function($compile) {
+
+    function createAccordionTemplate(scope) {
+      if(scope.options.template) {
+        var el = angular.element(scope.options.template);
+
+        el.addClass('jn-accordion');
+        el.attr('ng-show', 'row.clicked'); //append click handler | will make smarter later
+
+        scope.options.template = $compile(el);
+      }
+    }
+
     return {
       restrict: 'EA',
       scope: {
         dataset: '=',
         options: '='
       },
-      template: '<div ng-repeat="row in dataset">' +
-                  '<div jn-grid-row></div>' +
-                '</div>',
+      template: '<jn-grid-row ng-repeat="row in dataset"></jn-grid-row>',
       link: function(scope) {
         scope.options = scope.options || {}
-
-        if(scope.options.template) {
-          var el = angular.element(scope.options.template);
-          el.attr('ng-show', 'row.clicked'); //append click handler | will make smarter later
-          scope.options.template = $compile(el);
-        }
+        createAccordionTemplate(scope);
       }
     }
   }]);
