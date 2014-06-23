@@ -32,18 +32,29 @@ angular.module('jnGrid', [])
     }
 
     function createCells(scope, element) {
-      if(!scope.options.columns) {
-        var keys = Object.keys(scope.row);
 
-        for(var i in keys) {
-          var key = keys[i];
+      var keys = [];
+
+      if(!scope.options.columns) {
+        var temp = Object.keys(scope.row);
+
+        for(var i in temp) {
+          var key = temp[i];
 
           if(IGNORED_PROPERTIES.indexOf(key) === -1) {
-            element.append($compile('<div jn-grid-cell value="row.' + key + '"></div>')(scope));
+            keys.push({ field: key });
           }
-
         }
       }
+      else {
+        keys = scope.options.columns;
+      }
+
+      for(var i in keys) {
+        var key = keys[i];
+        element.append($compile('<div jn-grid-cell value="row.' + key.field + '"></div>')(scope));
+      }
+
     }
 
     return {
@@ -59,7 +70,7 @@ angular.module('jnGrid', [])
             row.clicked = false;
 
             createCells(scope, element);
-            createAccordion(scope, element, scope.options.template);
+            createAccordion(scope, element, scope.options.accordion);
           }
         };
       }
@@ -69,13 +80,13 @@ angular.module('jnGrid', [])
   .directive('jnGrid', ['$compile', function($compile) {
 
     function createAccordionTemplate(scope) {
-      if(scope.options.template) {
-        var el = angular.element(scope.options.template);
+      if(scope.options.accordion) {
+        var el = angular.element(scope.options.accordion);
 
         el.addClass('jn-accordion');
         el.attr('ng-show', 'row.clicked'); //append click handler | will make smarter later
 
-        scope.options.template = $compile(el);
+        scope.options.accordion = $compile(el);
       }
     }
 
@@ -83,7 +94,7 @@ angular.module('jnGrid', [])
       restrict: 'EA',
       scope: {
         dataset: '=',
-        options: '='
+        options: '=?'
       },
       template: '<jn-grid-row ng-repeat="row in dataset"></jn-grid-row>',
       link: function(scope) {

@@ -4,6 +4,7 @@ jn-grid-cell, [jn-grid-cell] {
 
 jn-grid-row, [jn-grid-row] {
   display: table-row;
+  cursor: pointer;
 }
 
 jn-grid,[jn-grid] {
