@@ -14,10 +14,10 @@ jn-grid,[jn-grid] {
 }
 
 .jnAccordion {
-  clear: both;
+  padding: 0.5em;
 }
 
-.clickable,
+.clickable {
   cursor: pointer;
 }
 

@@ -1,5 +1,8 @@
 angular.module('jnGrid', [])
 
+  //======================//
+  //    Cell Directive    //
+  //======================//
   .directive('jnGridCell', [function() {
     return {
       restrict: 'EA',
@@ -12,15 +15,31 @@ angular.module('jnGrid', [])
     };
   }])
 
-  .directive('jnGridRow', ['$compile', '$rootScope', function($compile, $rootScope) {
+  //======================//
+  //   Header Directive   //
+  //======================//
+  .directive('jnGridHeader', [function() {
 
-    var IGNORED_PROPERTIES = [ '$$hashKey', 'clicked' ];
+    return {
+      restrict: 'EA',
+      requires: 'jnGrid',
+      replace: true,
+      template: '<th>{{ column.displayName || column.field }}</th>'
+    };
+
+  }])
+
+  //======================//
+  //     Row Directive    //
+  //======================//
+  .directive('jnGridRow', ['$compile', '$rootScope', function($compile, $rootScope) {
 
     function createAccordion(scope, element, template) {
       if(template) {
 
         template(scope, function(el) {
           element.after(el);
+          element.addClass('clickable');
         });
 
         element.bind('click', function() {
@@ -33,26 +52,10 @@ angular.module('jnGrid', [])
 
     function createCells(scope, element) {
 
-      var keys = [];
-
-      if(!scope.options.columns) {
-        var temp = Object.keys(scope.row);
-
-        for(var i in temp) {
-          var key = temp[i];
-
-          if(IGNORED_PROPERTIES.indexOf(key) === -1) {
-            keys.push({ field: key });
-          }
-        }
-      }
-      else {
-        keys = scope.options.columns;
-      }
+      var keys = scope.options.columns;
 
       for(var i in keys) {
-        var key = keys[i];
-        element.append($compile('<div jn-grid-cell value="row.' + key.field + '"></div>')(scope));
+        element.append($compile('<div jn-grid-cell value="row.' + keys[i].field + '"></div>')(scope));
       }
 
     }
@@ -71,16 +74,38 @@ angular.module('jnGrid', [])
     };
   }])
 
+  //======================//
+  //    Grid Directive    //
+  //======================//
   .directive('jnGrid', ['$compile', function($compile) {
 
     function createAccordionTemplate(scope) {
       if(scope.options.accordion) {
-        var el = angular.element(scope.options.accordion);
+        var el = angular.element('<td>' + scope.options.accordion + '</td>');
 
         el.addClass('jnAccordion');
+        el.attr('colspan', scope.options.columns.length);
+        el.attr('ng-class', '{ jnRowEven: $even, jnRowOdd: $odd }');
         el.attr('ng-show', 'row.clicked'); //append click handler | will make smarter later
 
         scope.options.accordion = $compile(el);
+      }
+    }
+
+    function createColumns(scope) {
+      var IGNORED_PROPERTIES = [ '$$hashKey', 'clicked' ];
+
+      if(!scope.options.columns) {
+        scope.options.columns = [];
+        var temp = Object.keys(scope.dataset[0]);
+
+        for(var i in temp) {
+          var key = temp[i];
+
+          if(IGNORED_PROPERTIES.indexOf(key) === -1) {
+            scope.options.columns.push({ field: key });
+          }
+        }
       }
     }
 
@@ -90,9 +115,14 @@ angular.module('jnGrid', [])
         dataset: '=',
         options: '=?'
       },
-      template: '<jn-grid-row ng-class="{jnRowEven: $even, jnRowOdd: $odd}" ng-repeat="row in dataset"></jn-grid-row>',
+      template: '<tr><jn-grid-header ng-repeat="column in options.columns"></jn-grid-header></tr>'+
+                '<jn-grid-row ng-class="{ jnRowEven: $even,' +
+                                       '  jnRowOdd: $odd }"' +
+                             'ng-repeat="row in dataset">' +
+                '</jn-grid-row>',
       link: function(scope) {
         scope.options = scope.options || {}
+        createColumns(scope);
         createAccordionTemplate(scope);
       }
     }
