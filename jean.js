@@ -24,17 +24,27 @@ angular.module('jnGrid', [])
       restrict: 'EA',
       requires: 'jnGrid',
       replace: true,
-      template: '<th ng-click="clickFn()">{{ column.displayName || column.field }}</th>',
-      link: function(scope) {
+      template: '<th class="jnHeader" ng-click="clickFn()">{{ column.displayName || column.field }}</th>',
+      link: function(scope, element) {
+
+        if(scope.column.sortable) {
+          element.addClass('clickable');
+        }
+
         scope.clickFn = function() {
           if(scope.column.sortable) {
             if(scope.$parent.sortCol === scope.column.field) {
               scope.$parent.sortDir = !scope.$parent.sortDir;
             }
             else {
+              angular.element(document.getElementsByClassName('sorted')[0]).removeClass('sorted');
+              element.addClass('sorted');
               scope.$parent.sortCol = scope.column.field;
               scope.$parent.sortDir = false;
             }
+
+            element.removeClass('sort-' + !scope.$parent.sortDir);
+            element.addClass('sort-' + scope.$parent.sortDir);
           }
         };
       }

@@ -1,5 +1,8 @@
+.jnHeader {
+  position: relative;
+}
+
 jn-grid-cell, [jn-grid-cell] {
-  display: table-cell;
   padding: 0.5em;
 }
 
@@ -27,4 +30,24 @@ jn-grid,[jn-grid] {
 
 .jnRowOdd {
   background: #ddd;
+}
+
+.sorted.sort-true::after {
+  position: absolute;
+  top: 0.5em;
+  margin-left: 0.25em;
+  content: ' ';
+	border-left: 5px solid transparent;
+	border-right: 5px solid transparent;
+  border-bottom: 5px solid #444;
+}
+
+.sorted.sort-false::after {
+  position: absolute;
+  top: 0.5em;
+  margin-left: 0.25em;
+  content: ' ';
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+	border-top: 5px solid #444;
 }
