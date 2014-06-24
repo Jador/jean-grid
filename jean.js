@@ -38,7 +38,7 @@ angular.module('jnGrid', [])
       restrict: 'EA',
       requires: 'jnGrid',
       replace: true,
-      template: '<th class="jnHeader" ng-click="clickFn()">{{ column.displayName || column.field }}</th>',
+      template: '<th class="jnHeader th-{{ $parent.$id }}" ng-click="clickFn()">{{ column.displayName || column.field }}</th>',
       link: function(scope, element) {
 
         if(scope.column.sortable) {
@@ -51,7 +51,10 @@ angular.module('jnGrid', [])
               scope.$parent.sortDir = !scope.$parent.sortDir;
             }
             else {
-              angular.element(document.getElementsByClassName('sorted')[0]).removeClass('sorted');
+
+              var selector = '.th-' + scope.$parent.$id + '.sorted';
+
+              angular.element(document.querySelector(selector)).removeClass('sorted');
               element.addClass('sorted');
               scope.$parent.sortCol = scope.column.field;
               scope.$parent.sortDir = false;
