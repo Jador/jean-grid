@@ -1,5 +1,19 @@
 angular.module('jnGrid', [])
 
+  .factory('syncService', [function() {
+    function get(url) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', url, false);
+      xhr.send(null);
+      return xhr.responseText;
+    }
+
+    return {
+      get: get
+    }
+
+  }])
+
   //======================//
   //    Cell Directive    //
   //======================//
@@ -104,16 +118,27 @@ angular.module('jnGrid', [])
   //======================//
   //    Grid Directive    //
   //======================//
-  .directive('jnGrid', ['$compile', function($compile) {
+  .directive('jnGrid', ['$compile', '$templateCache', 'syncService', function($compile, $templateCache, sync) {
+
+    function getRemoteTemplate(url) {
+      var template = sync.get(url);
+      $templateCache.put(url, template);
+      return template;
+    }
 
     function createAccordionTemplate(scope) {
+
+      if(scope.options.accordionUrl) {
+        scope.options.accordion = $templateCache.get(scope.options.accordionUrl) || getRemoteTemplate(scope.options.accordionUrl);
+      }
+
       if(scope.options.accordion) {
         var el = angular.element('<td>' + scope.options.accordion + '</td>');
 
         el.addClass('jnAccordion');
         el.attr('colspan', scope.options.columns.length);
         el.attr('ng-class', '{ jnRowEven: $even, jnRowOdd: $odd }');
-        el.attr('ng-show', 'row.show'); //append click handler | will make smarter later
+        el.attr('ng-show', 'row.show');
 
         scope.options.accordion = $compile(el);
       }
