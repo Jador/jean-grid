@@ -18,13 +18,26 @@ angular.module('jnGrid', [])
   //======================//
   //   Header Directive   //
   //======================//
-  .directive('jnGridHeader', [function() {
+  .directive('jnGridHeader', ['$filter', function($filter) {
 
     return {
       restrict: 'EA',
       requires: 'jnGrid',
       replace: true,
-      template: '<th>{{ column.displayName || column.field }}</th>'
+      template: '<th ng-click="clickFn()">{{ column.displayName || column.field }}</th>',
+      link: function(scope) {
+        scope.clickFn = function() {
+          if(scope.column.sortable) {
+            if(scope.$parent.sortCol === scope.column.field) {
+              scope.$parent.sortDir = !scope.$parent.sortDir;
+            }
+            else {
+              scope.$parent.sortCol = scope.column.field;
+              scope.$parent.sortDir = false;
+            }
+          }
+        };
+      }
     };
 
   }])
@@ -43,7 +56,14 @@ angular.module('jnGrid', [])
         });
 
         element.bind('click', function() {
-          scope.row.clicked = !scope.row.clicked;
+
+          if(scope.options.rowClickedFn) {
+            scope.options.rowClickedFn(scope.row);
+          }
+          else {
+            scope.row.show = !scope.row.show;
+          }
+
           scope.$apply();
         });
 
@@ -51,13 +71,10 @@ angular.module('jnGrid', [])
     }
 
     function createCells(scope, element) {
-
       var keys = scope.options.columns;
-
       for(var i in keys) {
         element.append($compile('<div jn-grid-cell value="row.' + keys[i].field + '"></div>')(scope));
       }
-
     }
 
     return {
@@ -66,7 +83,7 @@ angular.module('jnGrid', [])
 
       link: function(scope, element) {
         var row = scope.row;
-        row.clicked = false;
+        row.show = false;
 
         createCells(scope, element);
         createAccordion(scope, element, scope.options.accordion);
@@ -86,7 +103,7 @@ angular.module('jnGrid', [])
         el.addClass('jnAccordion');
         el.attr('colspan', scope.options.columns.length);
         el.attr('ng-class', '{ jnRowEven: $even, jnRowOdd: $odd }');
-        el.attr('ng-show', 'row.clicked'); //append click handler | will make smarter later
+        el.attr('ng-show', 'row.show'); //append click handler | will make smarter later
 
         scope.options.accordion = $compile(el);
       }
@@ -118,7 +135,7 @@ angular.module('jnGrid', [])
       template: '<tr><jn-grid-header ng-repeat="column in options.columns"></jn-grid-header></tr>'+
                 '<jn-grid-row ng-class="{ jnRowEven: $even,' +
                                        '  jnRowOdd: $odd }"' +
-                             'ng-repeat="row in dataset">' +
+                             'ng-repeat="row in dataset | orderBy:sortCol:sortDir">' +
                 '</jn-grid-row>',
       link: function(scope) {
         scope.options = scope.options || {}
