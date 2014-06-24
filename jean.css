@@ -10,6 +10,12 @@ jn-grid-row, [jn-grid-row] {
   display: table-row;
 }
 
+jn-grid-row.selected,
+[jn-grid-row].selected,
+.jnAccordion.selected {
+  background: #428bca;
+}
+
 jn-grid,[jn-grid] {
   display: table;
   width: 100%;

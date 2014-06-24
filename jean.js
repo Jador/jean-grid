@@ -77,12 +77,50 @@ angular.module('jnGrid', [])
     function createAccordion(scope, element, template) {
       if(template) {
 
+        var accordion;
+
         template(scope, function(el) {
+          accordion = el;
           element.after(el);
           element.addClass('clickable');
         });
 
         element.bind('click', function() {
+
+          if(!scope.options.selectByCheckboxOnly) {
+            if(scope.selected.rows.indexOf(scope.row) > -1) {
+              //deselect
+              if(scope.options.multiSelect) {
+                var idx = scope.selected.rows.indexOf(scope.row);
+                if(idx > -1) {
+                  scope.selected.rows.splice(idx, 1);
+                }
+              }
+              else {
+                scope.selected.rows[0] = undefined;
+              }
+
+              element.removeClass('selected');
+              accordion.removeClass('selected');
+
+              scope.selected.item = undefined;
+            }
+            else {
+              //select
+              if(scope.options.multiSelect) {
+                scope.selected.rows.push(scope.row);
+              }
+              else {
+                scope.selected.rows[0] = scope.row;
+                angular.element(document.querySelector('jn-grid-row.selected')).removeClass('selected');
+              }
+
+              element.addClass('selected');
+              accordion.addClass('selected');
+
+              scope.selected.item = scope.row;
+            }
+          }
 
           if(scope.options.rowClickedFn) {
             scope.options.rowClickedFn(scope.row);
@@ -168,7 +206,7 @@ angular.module('jnGrid', [])
       restrict: 'EA',
       scope: {
         dataset: '=',
-        options: '=?'
+        options: '=?',
       },
       template: '<tr><jn-grid-header ng-repeat="column in options.columns"></jn-grid-header></tr>'+
                 '<jn-grid-row ng-class="{ jnRowEven: $even,' +
@@ -177,6 +215,12 @@ angular.module('jnGrid', [])
                 '</jn-grid-row>',
       link: function(scope) {
         scope.options = scope.options || {}
+
+        scope.selected = {};
+        scope.selected.rows = [];
+
+        scope.$watch('selected.item', function() { console.log(scope.selected); });
+
         createColumns(scope);
         createAccordionTemplate(scope);
       }
