@@ -87,38 +87,41 @@ angular.module('jnGrid', [])
 
         element.bind('click', function() {
 
+          //TODO refactoring
+
           if(!scope.options.selectByCheckboxOnly) {
-            if(scope.selected.rows.indexOf(scope.row) > -1) {
+            if(scope.options.selected.rows.indexOf(scope.row) > -1) {
               //deselect
               if(scope.options.multiSelect) {
-                var idx = scope.selected.rows.indexOf(scope.row);
+                var idx = scope.options.selected.rows.indexOf(scope.row);
                 if(idx > -1) {
-                  scope.selected.rows.splice(idx, 1);
+                  scope.options.selected.rows.splice(idx, 1);
                 }
               }
               else {
-                scope.selected.rows[0] = undefined;
+                scope.options.selected.rows[0] = undefined;
               }
 
               element.removeClass('selected');
               accordion.removeClass('selected');
 
-              scope.selected.item = undefined;
+              scope.options.selected.item = undefined;
             }
             else {
               //select
               if(scope.options.multiSelect) {
-                scope.selected.rows.push(scope.row);
+                scope.options.selected.rows.push(scope.row);
               }
               else {
-                scope.selected.rows[0] = scope.row;
+                scope.options.selected.rows[0] = scope.row;
                 angular.element(document.querySelector('jn-grid-row.selected')).removeClass('selected');
+                angular.element(document.querySelector('.jnAccordion.selected')).removeClass('selected');
               }
 
               element.addClass('selected');
               accordion.addClass('selected');
 
-              scope.selected.item = scope.row;
+              scope.options.selected.item = scope.row;
             }
           }
 
@@ -216,10 +219,8 @@ angular.module('jnGrid', [])
       link: function(scope) {
         scope.options = scope.options || {}
 
-        scope.selected = {};
-        scope.selected.rows = [];
-
-        scope.$watch('selected.item', function() { console.log(scope.selected); });
+        scope.options.selected = {};
+        scope.options.selected.rows = [];
 
         createColumns(scope);
         createAccordionTemplate(scope);
