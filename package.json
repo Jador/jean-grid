@@ -20,6 +20,9 @@
   "author": "Tyler Graham <tyler.graham.prog@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "gulp": "^3.8.1"
+    "del": "^0.1.0",
+    "gulp": "^3.8.1",
+    "gulp-minify-css": "^0.3.5",
+    "gulp-uglify": "^0.3.1"
   }
 }
