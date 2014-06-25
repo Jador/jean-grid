@@ -14,6 +14,16 @@ angular.module('jnGrid', [])
 
   }])
 
+  // .directive('bindOnce', [function() {
+  //   return {
+  //     link: function(scope) {
+  //       setTimeout(function() {
+  //         scope.$destroy();
+  //       }, 0);
+  //     }
+  //   }
+  // }])
+
   //======================//
   //    Cell Directive    //
   //======================//
@@ -32,7 +42,7 @@ angular.module('jnGrid', [])
   //======================//
   //   Header Directive   //
   //======================//
-  .directive('jnGridHeader', ['$filter', function($filter) {
+  .directive('jnGridHeader', [function() {
 
     return {
       restrict: 'EA',
@@ -71,9 +81,9 @@ angular.module('jnGrid', [])
   .directive('jnGridRow', ['$compile', '$rootScope', function($compile, $rootScope) {
 
     function createAccordion(scope, element, template) {
-      if(template) {
+      var accordion;
 
-        var accordion;
+      if(template) {
 
         template(scope, function(el) {
           accordion = el;
@@ -81,57 +91,75 @@ angular.module('jnGrid', [])
           element.addClass('clickable');
         });
 
-        element.bind('click', function() {
-
-          //TODO refactoring
-
-          if(!scope.options.selectByCheckboxOnly) {
-            if(scope.options.selected.rows.indexOf(scope.row) > -1) {
-              //deselect
-              if(scope.options.multiSelect) {
-                var idx = scope.options.selected.rows.indexOf(scope.row);
-                if(idx > -1) {
-                  scope.options.selected.rows.splice(idx, 1);
-                }
-              }
-              else {
-                scope.options.selected.rows[0] = undefined;
-              }
-
-              element.removeClass('selected');
-              accordion.removeClass('selected');
-
-              scope.options.selected.item = undefined;
-            }
-            else {
-              //select
-              if(scope.options.multiSelect) {
-                scope.options.selected.rows.push(scope.row);
-              }
-              else {
-                scope.options.selected.rows[0] = scope.row;
-                angular.element(document.querySelector('jn-grid-row.selected')).removeClass('selected');
-                angular.element(document.querySelector('.jnAccordion.selected')).removeClass('selected');
-              }
-
-              element.addClass('selected');
-              accordion.addClass('selected');
-
-              scope.options.selected.item = scope.row;
-            }
-          }
-
-          if(scope.options.rowClickedFn) {
-            scope.options.rowClickedFn(scope.row);
-          }
-          else {
-            scope.row.show = !scope.row.show;
-          }
-
-          scope.$apply();
-        });
-
       }
+
+      element.bind('click', function() { selectRow(scope, element, accordion); });
+    }
+
+    function selectRow(scope, element, accordion) {
+
+      if(scope.options.enableRowSelection) {
+        // TODO !scope.options.selectByCheckboxOnly
+        if(scope.options.selected.rows.indexOf(scope.row) > -1) {
+          deselect();
+        }
+        else {
+          select();
+        }
+      }
+
+      function select() {
+        if(scope.options.multiSelect) {
+          scope.options.selected.rows.push(scope.row);
+        }
+        else {
+          scope.options.selected.rows[0] = scope.row;
+          angular.element(document.querySelector('jn-grid-row.selected')).removeClass('selected');
+          angular.element(document.querySelector('.jnAccordion.selected')).removeClass('selected');
+        }
+
+        element.addClass('selected');
+
+        if(accordion) {
+          accordion.addClass('selected');
+        }
+
+        scope.options.selected.item = scope.row;
+        scope.$emit('jnRowSelect', scope.options.id);
+      }
+
+      function deselect() {
+        if(scope.options.multiSelect) {
+          var idx = scope.options.selected.rows.indexOf(scope.row);
+          if(idx > -1) {
+            scope.options.selected.rows.splice(idx, 1);
+          }
+        }
+        else {
+          scope.options.selected.rows[0] = undefined;
+        }
+
+        element.removeClass('selected');
+
+        if(accordion) {
+          accordion.removeClass('selected');
+        }
+
+        scope.options.selected.item = undefined;
+        scope.$emit('jnRowDeselect', scope.options.id);
+      }
+
+      if(accordion) {
+        if(scope.options.rowClickedFn) {
+          scope.options.rowClickedFn(scope.row);
+        }
+        else {
+          scope.row.show = !scope.row.show;
+        }
+
+        scope.$apply();
+      }
+
     }
 
     function createCells(scope, element) {
@@ -215,12 +243,12 @@ angular.module('jnGrid', [])
       link: function(scope) {
         scope.options = scope.options || {}
 
+        if(scope.options.enableRowSelection === undefined) {
+          scope.options.enableRowSelection = true;
+        }
+
         scope.options.selected = {};
         scope.options.selected.rows = [];
-
-        scope.$watch('options.selected.item', function() {
-          scope.$emit('jnRowSelect', scope.options.id);
-        });
 
         createColumns(scope);
         createAccordionTemplate(scope);
