@@ -222,6 +222,10 @@ angular.module('jnGrid', [])
         scope.options.selected = {};
         scope.options.selected.rows = [];
 
+        scope.$watch('options.selected.item', function() {
+          scope.$emit('jnRowSelect', scope.options.id);
+        });
+
         createColumns(scope);
         createAccordionTemplate(scope);
       }
