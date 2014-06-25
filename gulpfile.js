@@ -12,22 +12,21 @@ gulp.task('build', [
 ]);
 
 gulp.task('clean', function(cb) {
-  console.log(cb);
-  del(['dist'], cb);
+  del(['build'], cb);
 });
 
 gulp.task('scripts', ['clean'], function() {
   gulp.src(['!gulpfile.js','*.js'])
     .pipe(uglify())
     .pipe(rename(min))
-    .pipe(gulp.dest('dist'));
+    .pipe(gulp.dest('build'));
 });
 
 gulp.task('styles', ['clean'], function() {
   gulp.src('*.css')
     .pipe(css())
     .pipe(rename(min))
-    .pipe(gulp.dest('dist'));
+    .pipe(gulp.dest('build'));
 });
 
 function min(path) {

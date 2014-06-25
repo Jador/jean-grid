@@ -14,16 +14,6 @@ angular.module('jnGrid', [])
 
   }])
 
-  // .directive('bindOnce', [function() {
-  //   return {
-  //     link: function(scope) {
-  //       setTimeout(function() {
-  //         scope.$destroy();
-  //       }, 0);
-  //     }
-  //   }
-  // }])
-
   //======================//
   //    Cell Directive    //
   //======================//
