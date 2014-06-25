@@ -38,12 +38,8 @@ angular.module('jnGrid', [])
       restrict: 'EA',
       requires: 'jnGrid',
       replace: true,
-      template: '<th class="jnHeader th-{{ $parent.$id }}" ng-click="clickFn()">{{ column.displayName || column.field }}</th>',
+      template: '<th class="jnHeader th-{{ $parent.$id }} {{ column.sortable ? \'clickable\' : \'\' }}" ng-click="clickFn()">{{ column.displayName || column.field }}</th>',
       link: function(scope, element) {
-
-        if(scope.column.sortable) {
-          element.addClass('clickable');
-        }
 
         scope.clickFn = function() {
           if(scope.column.sortable) {
