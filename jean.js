@@ -115,7 +115,7 @@ angular.module('jnGrid', [])
         }
 
         scope.options.selected.item = scope.row;
-        scope.$emit('jnRowSelect', scope.options.id);
+        scope.$emit('jnRowSelect', scope.options.id, scope.row);
       }
 
       function deselect() {
@@ -136,12 +136,12 @@ angular.module('jnGrid', [])
         }
 
         scope.options.selected.item = undefined;
-        scope.$emit('jnRowDeselect', scope.options.id);
+        scope.$emit('jnRowDeselect', scope.options.id, scope.row);
       }
 
       if(accordion) {
-        if(scope.options.rowClickedFn) {
-          scope.options.rowClickedFn(scope.row);
+        if(scope.options.showAccordionFn) {
+          scope.options.showAccordion(scope.row);
         }
         else {
           scope.row.show = !scope.row.show;
@@ -167,7 +167,10 @@ angular.module('jnGrid', [])
         var row = scope.row;
         row.show = false;
 
-        createCells(scope, element);
+        scope.$watch('dataset', function() {
+          createCells(scope, element);
+        });
+
         createAccordion(scope, element, scope.options.accordion);
       }
     };
@@ -203,17 +206,19 @@ angular.module('jnGrid', [])
     }
 
     function createColumns(scope) {
-      var IGNORED_PROPERTIES = [ '$$hashKey', 'clicked' ];
+      var IGNORED_PROPERTIES = [ '$$hashKey', 'clicked', 'show' ];
 
-      if(!scope.options.columns) {
-        scope.options.columns = [];
-        var temp = Object.keys(scope.dataset[0]);
+      if(scope.dataset && scope.dataset.length > 0) {
+        if(!scope.options.columns) {
+          scope.options.columns = [];
+          var temp = Object.keys(scope.dataset[0]);
 
-        for(var i in temp) {
-          var key = temp[i];
+          for(var i in temp) {
+            var key = temp[i];
 
-          if(IGNORED_PROPERTIES.indexOf(key) === -1) {
-            scope.options.columns.push({ field: key });
+            if(IGNORED_PROPERTIES.indexOf(key) === -1) {
+              scope.options.columns.push({ field: key });
+            }
           }
         }
       }
@@ -225,11 +230,13 @@ angular.module('jnGrid', [])
         dataset: '=',
         options: '=?',
       },
-      template: '<tr><jn-grid-header ng-repeat="column in options.columns"></jn-grid-header></tr>'+
-                '<jn-grid-row ng-class="{ jnRowEven: $even,' +
-                                       '  jnRowOdd: $odd }"' +
-                             'ng-repeat="row in dataset | orderBy:sortCol:sortDir">' +
-                '</jn-grid-row>',
+      template: '<table>'+
+                  '<tr><jn-grid-header ng-repeat="column in options.columns"></jn-grid-header></tr>'+
+                  '<jn-grid-row '+
+                      'ng-class="{ jnRowEven: $even, jnRowOdd: $odd }"' +
+                      'ng-repeat="row in dataset | orderBy:sortCol:sortDir">' +
+                  '</jn-grid-row>'+
+                '</table>',
       link: function(scope) {
         scope.options = scope.options || {}
 
@@ -239,6 +246,12 @@ angular.module('jnGrid', [])
 
         scope.options.selected = {};
         scope.options.selected.rows = [];
+
+        if(!scope.options.columns) {
+          scope.$watch('dataset', function() {
+            createColumns(scope);
+          });
+        }
 
         createColumns(scope);
         createAccordionTemplate(scope);
