@@ -18,8 +18,14 @@ angular.module('jnGrid', [])
     return function(value, spec) {
 
       if(spec) {
-        var args = spec.split(':');
-        var filter = $filter(args.shift());        
+        var args = [];
+        var spec = spec.split(':');
+        var filter = $filter(spec.shift());
+
+        if(spec.length > 1) {
+          args[0] = spec.join(':');
+        }
+
         args.unshift(value);
 
         return filter.apply(null, args);
