@@ -14,6 +14,22 @@ angular.module('jnGrid', [])
 
   }])
 
+  .filter('jnfilter', ['$filter', function($filter) {
+    return function(value, spec) {
+
+      if(spec) {
+        var args = spec.split(':');
+        var filter = $filter(args.shift());        
+        args.unshift(value);
+
+        return filter.apply(null, args);
+      }
+      else {
+        return value;
+      }
+    }
+  }])
+
   //======================//
   //    Cell Directive    //
   //======================//
@@ -23,9 +39,10 @@ angular.module('jnGrid', [])
       requires: 'jnGrid',
       replace: true,
       scope: {
-        value: '='
+        value: '=',
+        filter: '@?'
       },
-      template: '<td>{{ value }}</td>'
+      template: '<td>{{ value | jnfilter: filter }}</td>',
     };
   }])
 
@@ -153,9 +170,9 @@ angular.module('jnGrid', [])
     }
 
     function createCells(scope, element) {
-      var keys = scope.options.columns;
-      for(var i in keys) {
-        element.append($compile('<div jn-grid-cell value="row.' + keys[i].field + '"></div>')(scope));
+      var cols = scope.options.columns;
+      for(var i in cols) {
+        element.append($compile('<div jn-grid-cell value="row.' + cols[i].field + '" filter="' + (cols[i].filter ? cols[i].filter : '') + '"></div>')(scope));
       }
     }
 
