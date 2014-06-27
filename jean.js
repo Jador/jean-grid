@@ -141,7 +141,7 @@ angular.module('jnGrid', [])
 
       if(accordion) {
         if(scope.options.showAccordionFn) {
-          scope.options.showAccordion(scope.row);
+          scope.options.showAccordionFn(scope.row);
         }
         else {
           scope.row.show = !scope.row.show;
