@@ -28,7 +28,7 @@ angular.module('jnGrid', [])
       else {
         return value;
       }
-      
+
     }
   }])
 
@@ -224,6 +224,16 @@ angular.module('jnGrid', [])
       }
     }
 
+    function defaultProperties(scope) {
+      for(var i in PROPERTIES) {
+        var prop = PROPERTIES[i];
+
+        if(scope.options[prop.property] === undefined || scope.options[prop.property] === null) {
+          scope.options[prop.property] = prop.default;
+        }
+      }
+    }
+
     function createColumns(scope) {
       var IGNORED_PROPERTIES = [ '$$hashKey', 'clicked', 'show' ];
 
@@ -243,6 +253,13 @@ angular.module('jnGrid', [])
       }
     }
 
+    var PROPERTIES = [
+      { property: 'enableRowSelection', default: true },
+      { property: 'selectByCheckboxOnly', default: false },
+      { property: 'enableCheckbox', default:false },
+      { property: 'multiSelect', default:false }
+    ];
+
     return {
       restrict: 'EA',
       scope: {
@@ -259,9 +276,7 @@ angular.module('jnGrid', [])
       link: function(scope) {
         scope.options = scope.options || {}
 
-        if(scope.options.enableRowSelection === undefined) {
-          scope.options.enableRowSelection = true;
-        }
+        defaultProperties(scope);
 
         scope.options.selected = {};
         scope.options.selected.rows = [];
