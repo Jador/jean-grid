@@ -123,8 +123,11 @@ angular.module('jnGrid', [])
         }
         else {
           scope.options.selected.rows[0] = scope.row;
-          angular.element(document.querySelector('jn-grid-row.selected')).removeClass('selected');
-          angular.element(document.querySelector('.jnAccordion.selected')).removeClass('selected');
+
+          var parent = element.parent();
+
+          angular.element(parent[0].querySelector('jn-grid-row.selected')).removeClass('selected');
+          angular.element(parent[0].querySelector('.jnAccordion.selected')).removeClass('selected');
         }
 
         element.addClass('selected');
