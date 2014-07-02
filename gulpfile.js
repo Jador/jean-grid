@@ -3,8 +3,15 @@ var uglify = require('gulp-uglify');
 var css = require('gulp-minify-css');
 var rename = require('gulp-rename');
 var del = require('del');
+var concat = require('gulp-concat');
 
-gulp.task('default', ['build']);
+gulp.task('default', ['concat', 'build']);
+
+gulp.task('concat', function() {
+  gulp.src(['src/module.js', 'src/templates.js', 'src/common.js', 'src/*.js'])
+    .pipe(concat('jean.js'))
+    .pipe(gulp.dest('.'));
+});
 
 gulp.task('build', [
   'scripts',

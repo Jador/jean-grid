@@ -22,6 +22,7 @@
   "devDependencies": {
     "del": "^0.1.0",
     "gulp": "^3.8.1",
+    "gulp-concat": "^2.2.0",
     "gulp-minify-css": "^0.3.5",
     "gulp-rename": "^1.2.0",
     "gulp-uglify": "^0.3.1"
