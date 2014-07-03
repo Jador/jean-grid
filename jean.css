@@ -2,7 +2,7 @@
   position: relative;
 }
 
-jn-grid-cell, [jn-grid-cell], .jnHeader {
+[jn-grid-cell], .jnHeader {
   padding: 0.5em;
 }
 
@@ -16,8 +16,9 @@ jn-grid-row.selected,
   background: #428bca;
 }
 
-jn-grid,[jn-grid] {
+[jn-grid] {
   display: table;
+  border-collapse: collapse;
   width: 100%;
   font-family: 'Helvetica neue', arial, sans-serif;
 }

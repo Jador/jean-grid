@@ -3,7 +3,7 @@ angular.module('jnGrid')
 .directive('jnGridHeader', [function() {
 
   return {
-    restrict: 'EA',
+    restrict: 'A',
     requires: 'jnGrid',
     replace: true,
     template: '<th class="jnHeader th-{{ $parent.$id }} {{ column.sortable ? \'clickable\' : \'\' }}" ng-click="clickFn()">{{ column.displayName || column.field }}</th>',

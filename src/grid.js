@@ -63,7 +63,7 @@ angular.module('jnGrid')
   ];
 
   return {
-    restrict: 'EA',
+    restrict: 'A',
     scope: {
       dataset: '=',
       options: '=?',

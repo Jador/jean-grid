@@ -132,7 +132,7 @@ angular.module('jnGrid')
   }
 
   return {
-    restrict: 'EA',
+    restrict: 'A',
     requires: 'jnGrid',
 
     link: function(scope, element) {

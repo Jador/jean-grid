@@ -2,17 +2,24 @@ angular.module('jnGrid', []);
 
 angular.module('jnGrid')
 
-.run(['$templateCache', function($templateCache) {
-  $templateCache.put('jnGrid.html',
+.run(['$templateCache', '$sce', function($templateCache, $sce) {
+
+  'use strict';
+
+  $templateCache.put('jnGrid.html', $sce.trustAsHtml(
     '<table>'+
-      '<tr>' +
-        '<jn-grid-header ng-repeat="column in options.columns"></jn-grid-header>' +
-      '</tr>' +
-      '<jn-grid-row '+
-        'ng-class="{ jnRowEven: $even, jnRowOdd: $odd }"' +
-        'ng-repeat="row in dataset | orderBy:sortCol:sortDir">' +
-      '</jn-grid-row>'+
-    '</table>');
+      '<thead>' +
+        '<tr class="jnHeaderRow">' +
+          '<th jn-grid-header ng-repeat="column in options.columns"></th>' +
+        '</tr>' +
+      '</thead>' +
+      '<tbody>' +
+        '<tr jn-grid-row '+
+          'ng-class="{ jnRowEven: $even, jnRowOdd: $odd }"' +
+          'ng-repeat="row in dataset | orderBy:sortCol:sortDir">' +
+        '</tr>'+
+      '</tbody>' +
+    '</table>'));
 }]);
 
 angular.module('jnGrid')
@@ -129,7 +136,7 @@ angular.module('jnGrid')
   ];
 
   return {
-    restrict: 'EA',
+    restrict: 'A',
     scope: {
       dataset: '=',
       options: '=?',
@@ -161,7 +168,7 @@ angular.module('jnGrid')
 .directive('jnGridHeader', [function() {
 
   return {
-    restrict: 'EA',
+    restrict: 'A',
     requires: 'jnGrid',
     replace: true,
     template: '<th class="jnHeader th-{{ $parent.$id }} {{ column.sortable ? \'clickable\' : \'\' }}" ng-click="clickFn()">{{ column.displayName || column.field }}</th>',
@@ -329,7 +336,7 @@ angular.module('jnGrid')
   }
 
   return {
-    restrict: 'EA',
+    restrict: 'A',
     requires: 'jnGrid',
 
     link: function(scope, element) {

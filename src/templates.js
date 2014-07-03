@@ -1,14 +1,21 @@
 angular.module('jnGrid')
 
-.run(['$templateCache', function($templateCache) {
-  $templateCache.put('jnGrid.html',
+.run(['$templateCache', '$sce', function($templateCache, $sce) {
+
+  'use strict';
+
+  $templateCache.put('jnGrid.html', $sce.trustAsHtml(
     '<table>'+
-      '<tr>' +
-        '<jn-grid-header ng-repeat="column in options.columns"></jn-grid-header>' +
-      '</tr>' +
-      '<jn-grid-row '+
-        'ng-class="{ jnRowEven: $even, jnRowOdd: $odd }"' +
-        'ng-repeat="row in dataset | orderBy:sortCol:sortDir">' +
-      '</jn-grid-row>'+
-    '</table>');
+      '<thead>' +
+        '<tr class="jnHeaderRow">' +
+          '<th jn-grid-header ng-repeat="column in options.columns"></th>' +
+        '</tr>' +
+      '</thead>' +
+      '<tbody>' +
+        '<tr jn-grid-row '+
+          'ng-class="{ jnRowEven: $even, jnRowOdd: $odd }"' +
+          'ng-repeat="row in dataset | orderBy:sortCol:sortDir">' +
+        '</tr>'+
+      '</tbody>' +
+    '</table>'));
 }]);
